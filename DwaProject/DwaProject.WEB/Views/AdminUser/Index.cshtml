@@ -1,0 +1,164 @@
+﻿@using System.Net;
+@using DwaProject.WEB.Viewmodels;
+@model IEnumerable<DwaProject.WEB.Viewmodels.VMUser>
+
+@{
+    ViewData["Title"] = "Index";
+    VMFilter _filter = ViewData["Filter"] as VMFilter;
+}
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-area="" asp-controller="User" asp-action="Login">Mewvies</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link" asp-area="" asp-controller="AdminVideo" asp-action="Index">Videos</a>
+                    <a class="nav-link" asp-area="" asp-controller="AdminCountry" asp-action="Index">Countries</a>
+                    <a class="nav-link" asp-area="" asp-controller="AdminTag" asp-action="Index">Tags</a>
+                    <a class="nav-link" asp-area="" asp-controller="AdminGenre" asp-action="Index">Genres</a>
+                    <a class="nav-link" asp-area="" asp-controller="AdminUser" asp-action="Index">Users</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<div class="container">
+    <form id="form" asp-controller="AdminUser" asp-action="Index">
+        <fieldset class="form-group row mt-3">
+            <legend>Filter:</legend>
+
+            <div class="col-3">
+                <label for="filterType">Filter type</label>
+                <select name="filterType" id="filterType" class="form-control">
+                    @if (_filter.FilterType == "firstName")
+                    {
+                        <option selected value="firstName">First name</option>
+                        <option value="lastName">Last name</option>
+                        <option value="country">Country of origin</option>
+                    }
+                    else if(_filter.FilterType == "lastName")
+                    {
+                        <option value="firstName">First name</option>
+                        <option selected value="lastName">Last name</option>
+                        <option value="country">Country of origin</option>
+                    }
+                    else
+                    {
+                        <option value="firstName">First name</option>
+                        <option value="lastName">Last name</option>
+                        <option selected value="country">Country of origin</option>
+                    }
+
+                </select>
+            </div>
+            <div class="col-4">
+                <label for="filterName">Name part:</label>
+                <input name="filterName" id="filterName" class="form-control" type="text" value="@_filter.FilterName">
+            </div>
+            <div class="col-auto">
+                <br />
+                <input id="btnSubmit" name="btnSubmit" class="btn btn-outline-secondary" type="submit" value="Submit">
+            </div>
+            <br/>
+            <div class="row">
+                <label>Page:</label>
+                <br />
+                <div class="btn-toolbar">
+                    <div class="btn-group mt-3">
+                        @for (var i = 1; i <= _filter!.TotalPages; i++)
+                        {
+                            var currClass = _filter.Page == i ? "btn-primary" : "btn-outline-primary";
+                                <a asp-action="Index"
+                                   data-page="@i"
+                                   class="pager-btn btn @currClass">@i</a>
+                        }
+                    </div>
+                </div>
+
+            </div>
+        </fieldset>
+    </form>
+    <br />
+    <h1>Users</h1>
+
+    <p>
+        <a asp-action="Create" class="btn btn-info">Create New</a>
+    </p>
+    <br />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.CreatedAt)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Username)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LastName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Phone)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IsConfirmed)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CountryOfResidenceId)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="user-table-body">
+            <partial name="_UserTableBodyPartial" />
+        </tbody>
+    </table>
+    <br />
+    <p>
+        <a asp-action="Create" class="btn btn-info">Create New</a>
+    </p>
+</div>
+
+@section Scripts {
+    <script>
+        $(".pager-btn").click(function (event) {
+            console.log("Pager button clicked");
+            event.preventDefault();
+
+            var page = $(this).data("page");
+
+            var ajaxData = {
+                page: page
+            };
+
+            $.ajax({
+                type: "GET",
+                url: "/AdminUser/UserTableBodyPartial",
+                data: ajaxData,
+                success: function (data) {
+                    $("#user-table-body").html(data);
+
+                    $(".pager-btn").removeClass("btn-primary");
+                    $(".pager-btn").addClass("btn-outline-primary");
+
+                    $(".pager-btn[data-page=" + page + "]").removeClass("btn-outline-primary");
+                    $(".pager-btn[data-page=" + page + "]").addClass("btn-primary");
+                },
+                error: function (data) {
+                    console.error("Ajax GET error", data);
+                }
+            });
+        });
+    </script>
+}

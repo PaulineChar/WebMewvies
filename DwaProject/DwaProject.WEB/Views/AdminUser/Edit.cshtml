@@ -1,0 +1,100 @@
+﻿@using DwaProject.WEB.Viewmodels;
+@model DwaProject.BL.BLModels.UserRegisterRequest
+
+@{
+    ViewData["Title"] = "Edit";
+    List<VMCountry> _countries = ViewData["Country"] as List<VMCountry>;
+}
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-area="" asp-controller="User" asp-action="Login">Mewvies</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link" asp-area="" asp-controller="AdminVideo" asp-action="Index">Videos</a>
+                    <a class="nav-link" asp-area="" asp-controller="AdminCountry" asp-action="Index">Countries</a>
+                    <a class="nav-link" asp-area="" asp-controller="AdminTag" asp-action="Index">Tags</a>
+                    <a class="nav-link" asp-area="" asp-controller="AdminGenre" asp-action="Index">Genres</a>
+                    <a class="nav-link" asp-area="" asp-controller="AdminUser" asp-action="Index">Users</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<div class="container">
+    <h1>Edit</h1>
+
+    <h4>User</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Username" class="control-label"></label>
+                    <input asp-for="Username" class="form-control" value="@Model.Username" />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="FirstName" class="control-label"></label>
+                    <input asp-for="FirstName" class="form-control" value="@Model.FirstName"/>
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="LastName" class="control-label"></label>
+                    <input asp-for="LastName" class="form-control" value="@Model.LastName"/>
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Password" class="control-label"></label>
+                    <label class="text-danger">Do not modify unless you really want to change the password!</label>
+                    <input type="password" asp-for="Password" value="********" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Email" class="control-label"></label>
+                    <input type="email" asp-for="Email" class="form-control" value="@Model.Email"/>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CountryOfResidenceId" class="control-label"></label>
+                    <select asp-for="CountryOfResidenceId" class="form-control">
+                        @foreach (var country in _countries)
+                        {
+                            if(Model.CountryOfResidenceId == country.Id)
+                            {
+                                <option selected value="@country.Id">@country.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@country.Id">@country.Name</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="CountryOfResidenceId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Phone" class="control-label"></label>
+                    <input asp-for="Phone" class="form-control" value="@Model.Phone"/>
+                    <span asp-validation-for="Phone" class="text-danger"></span>
+                </div>
+                <br />
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+    <br />
+    <div>
+        <a asp-action="Index" class="btn btn-info">Back to List</a>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

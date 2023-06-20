@@ -1,0 +1,15 @@
+﻿@model IEnumerable<DwaProject.WEB.Viewmodels.VMTag>
+
+@foreach (var item in Model)
+{
+    <tr>
+        <td>
+            @Html.HiddenFor(modelItem => item.Id)
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }, new { @class="btn btn-info"}) |
+            @Html.ActionLink("Delete", "Delete", new {id=item.Id }, new { @class="btn btn-danger"})
+        </td>
+    </tr>
+}

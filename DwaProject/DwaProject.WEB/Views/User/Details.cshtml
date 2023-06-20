@@ -1,0 +1,102 @@
+﻿@model DwaProject.WEB.Viewmodels.VMVideo
+@using System.Security.Claims;
+@using DwaProject.WEB.Viewmodels;
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor httpContextAccessor
+@{
+    string username = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+}
+@{
+    ViewData["Title"] = "Details";
+    VMImage _image = ViewData["Image"] as VMImage;
+}
+
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-area="" asp-controller="User" asp-action="Index">Mewvies</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link" asp-area="" asp-controller="User" asp-action="Index">Videos</a>
+                </div>
+            </div>
+            <div class="navbar-nav mx-auto order-0">
+                <a class="nav-link">@username</a>
+            </div>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" asp-area="" asp-controller="User" asp-action="UserProfile">Profile</a>
+                @if (username != null)
+                {
+                    <form asp-controller="User" asp-action="Logout"><button type="submit" class="btn btn-outline-primary ">Logout</button></form>
+                }
+            </div>
+        </div>
+    </nav>
+</header>
+
+
+
+<div class="container">
+    <h1>Details</h1>
+
+    <div>
+        <hr />
+        <dl class="row">
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayFor(model => model.ImageContent)
+            </dt>
+            <dd class="col-sm-10">
+                <img src="data:image/png;base64,@_image!.Content" />
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.Description)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.Description)
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.GenreName)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.GenreName)
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.TotalSeconds)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.TotalSeconds) s
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Tags)
+            </dt>
+            <dd class="col-sm-10">
+                @{
+                    string tags = "";
+                    int i = 0;
+                    for(; i < Model.Tags.Count() - 1; i++)
+                    {
+                        tags += Model.Tags[i] + ", ";
+                    }
+                    tags += Model.Tags[i];
+                }
+                @tags
+            </dd>
+        </dl>
+    </div>
+    <br />
+    <div>
+        <a href="@Model.StreamingUrl" target="_blank" class="btn btn-primary">Play video</a>
+        <br /><br />
+        <a asp-action="Index" class="btn btn-info">Back to video selection</a>
+    </div>
+</div>

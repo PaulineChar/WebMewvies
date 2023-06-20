@@ -1,0 +1,98 @@
+﻿@using DwaProject.WEB.Viewmodels;
+@model IEnumerable<DwaProject.WEB.Viewmodels.VMTag>
+
+@{
+    ViewData["Title"] = "Index";
+    VMFilter _filter = ViewData["Filter"] as VMFilter;
+}
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-area="" asp-controller="User" asp-action="Login">Mewvies</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link" asp-area="" asp-controller="AdminVideo" asp-action="Index">Videos</a>
+                    <a class="nav-link" asp-area="" asp-controller="AdminCountry" asp-action="Index">Countries</a>
+                    <a class="nav-link" asp-area="" asp-controller="AdminTag" asp-action="Index">Tags</a>
+                    <a class="nav-link" asp-area="" asp-controller="AdminGenre" asp-action="Index">Genres</a>
+                    <a class="nav-link" asp-area="" asp-controller="AdminUser" asp-action="Index">Users</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<br/>
+
+<div class="container">
+    <label>Page:</label><br />
+    <div class="btn-group">
+        @for (var i = 1; i <= _filter!.TotalPages; i++)
+        {
+            var currClass = _filter.Page == i ? "btn-primary" : "btn-outline-primary";
+            <a asp-action="Index"
+               data-page="@i"
+               class="pager-btn btn @currClass">@i</a>
+        }
+    </div>
+
+    <h1>Tags</h1>
+
+    <p>
+        <a asp-action="Create" class="btn btn-info">Create New</a>
+    </p>
+    <br/>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="tag-table-body">
+            <partial name="_TagTableBodyPartial" />
+        </tbody>
+    </table>
+    <br />
+    <p>
+        <a asp-action="Create" class="btn btn-info">Create New</a>
+    </p>
+</div>
+
+@section Scripts {
+    <script>
+        $(".pager-btn").click(function (event) {
+            console.log("Pager button clicked");
+            event.preventDefault();
+
+            var page = $(this).data("page");
+
+            var ajaxData = {
+                page: page
+            };
+
+            $.ajax({
+                type: "GET",
+                url: "/AdminTag/TagTableBodyPartial",
+                data: ajaxData,
+                success: function (data) {
+                    $("#tag-table-body").html(data);
+
+                    $(".pager-btn").removeClass("btn-primary");
+                    $(".pager-btn").addClass("btn-outline-primary");
+
+                    $(".pager-btn[data-page=" + page + "]").removeClass("btn-outline-primary");
+                    $(".pager-btn[data-page=" + page + "]").addClass("btn-primary");
+                },
+                error: function (data) {
+                    console.error("Ajax GET error", data);
+                }
+            });
+        });
+    </script>
+}

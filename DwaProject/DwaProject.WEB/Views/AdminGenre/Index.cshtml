@@ -1,0 +1,207 @@
+﻿@using DwaProject.WEB.Viewmodels;
+@model IEnumerable<DwaProject.WEB.Viewmodels.VMGenre>
+
+@{
+    ViewData["Title"] = "Index";
+    VMFilter _filter = ViewData["Filter"] as VMFilter;
+}
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-area="" asp-controller="User" asp-action="Login">Mewvies</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link" asp-area="" asp-controller="AdminVideo" asp-action="Index">Videos</a>
+                    <a class="nav-link" asp-area="" asp-controller="AdminCountry" asp-action="Index">Countries</a>
+                    <a class="nav-link" asp-area="" asp-controller="AdminTag" asp-action="Index">Tags</a>
+                    <a class="nav-link" asp-area="" asp-controller="AdminGenre" asp-action="Index">Genres</a>
+                    <a class="nav-link" asp-area="" asp-controller="AdminUser" asp-action="Index">Users</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<br/>
+<div class="container" id="container">
+    <partial name="IndexPartial" />
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(".pager-btn").click(function (event) {
+            console.log("Pager button clicked");
+            event.preventDefault();
+
+            var page = $(this).data("page");
+
+            var ajaxData = {
+            page: page
+            };
+
+            $.ajax({
+                type: "GET",
+                url: "/AdminGenre/GenreTableBodyPartial",
+                data: ajaxData,
+                success: function (data) {
+                $("#genre-table-body").html(data);
+
+                $(".pager-btn").removeClass("btn-primary");
+                $(".pager-btn").addClass("btn-outline-primary");
+
+                $(".pager-btn[data-page=" + page + "]").removeClass("btn-outline-primary");
+                $(".pager-btn[data-page=" + page + "]").addClass("btn-primary");
+                },
+                error: function (data) {
+                console.error("Ajax GET error", data);
+                }
+            });
+        });
+
+        $(document).ready(function () {
+
+            $(document).on("click", '.create', function () {
+
+                $.ajax({
+                    type: "GET",
+                    url: "/AdminGenre/CreatePartial",
+                    success: function (data) {
+                    $("#container").html(data);
+                    console.log("Ajax GET success");
+                    },
+                    error: function (data) {
+                    console.log("Ajax GET error");
+                    }
+                });
+            });
+
+        $(document).on("click", '.edit', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                type: "GET",
+                url: "/AdminGenre/EditPartial",
+                data: {
+                id:$(this).val()
+                },
+                success: function (data) {
+                $("#container").html(data);
+                console.log("Ajax GET success");
+                },
+                error: function (data) {
+                console.log("Ajax GET error");
+                }
+            });
+        });
+
+        $(document).on("click", '.delete', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                type: "GET",
+                url: "/AdminGenre/DeletePartial",
+                data: {
+                id: $(this).val()
+                },
+                success: function (data) {
+                $("#container").html(data);
+                console.log("Ajax GET success");
+                },
+                error: function (data) {
+                // We added also error handling function
+                // - another function that will be called when the request fails
+                console.log("Ajax GET error");
+                }
+            });
+        });
+        $(document).on("click", '.index', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                type: "GET",
+                url: "/AdminGenre/Index",
+                data: {
+                    "isAjax": true
+                },
+                success: function (data) {
+                $("#container").html(data);
+                console.log("Ajax POST success");
+                },
+                error: function (data) {
+                // We added also error handling function
+                // - another function that will be called when the request fails
+                console.log("Ajax GET error");
+                }
+            });
+        });
+
+        
+        $(document).on("click", '#createButton', function (e) {
+            
+            e.preventDefault();
+                /*https://stackoverflow.com/questions/18862066/jquery-ajax-always-returns-error-data-being-added-to-database*/
+            var form = $(this).closest('form');
+
+            $.ajax({
+                type: "POST",
+                url: "/AdminGenre/CreatePartial",
+                data: form.serialize(),
+                success: function (data) {
+                    $("#container").html(data);
+                    console.log("Ajax POST success");
+                },
+                error: function (data) {
+                    console.log("Ajax POST error");
+                }
+            });
+        });
+
+            $(document).on("click", '#editButton', function (e) {
+
+                e.preventDefault();
+                /*https://stackoverflow.com/questions/18862066/jquery-ajax-always-returns-error-data-being-added-to-database*/
+                var form = $(this).closest('form');
+
+                $.ajax({
+                    type: "POST",
+                    url: "/AdminGenre/EditPartial",
+                    data: form.serialize(),
+                    success: function (data) {
+                        $("#container").html(data);
+                        console.log("Ajax POST success");
+                    },
+                    error: function (data) {
+                        console.log("Ajax POST error");
+                    }
+                });
+            });
+
+            $(document).on("click", '#deleteButton', function (e) {
+
+                e.preventDefault();
+                /*https://stackoverflow.com/questions/18862066/jquery-ajax-always-returns-error-data-being-added-to-database*/
+                var form = $(this).closest('form');
+
+                $.ajax({
+                    type: "POST",
+                    url: "/AdminGenre/DeletePartial",
+                    data: form.serialize(),
+                    success: function (data) {
+                        $("#container").html(data);
+                        console.log("Ajax POST success");
+                    },
+                    error: function (data) {
+                        console.log("Ajax POST error");
+                    }
+                });
+            });
+    });
+
+    </script>
+}

@@ -1,0 +1,117 @@
+﻿@using DwaProject.WEB.Viewmodels;
+@using System.Security.Claims;
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor httpContextAccessor
+@{
+    string username = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+}
+@model List<VMVideo>
+@{
+
+    VMFilter _filter = ViewData["Filter"] as VMFilter;
+    List<VMImage> _images = ViewData["Images"] as List<VMImage>;
+    int videoID = 0;
+}
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-area="" asp-controller="User" asp-action="Index">Mewvies</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link" asp-area="" asp-controller="User" asp-action="Index">Videos</a>
+                </div>
+            </div>
+            <div class="navbar-nav mx-auto order-0">
+                <a class="nav-link">@username</a>
+            </div>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" asp-area="" asp-controller="User" asp-action="UserProfile">Profile</a>
+                @if (username != null)
+                {
+                    <form asp-controller="User" asp-action="Logout"><button type="submit" class="btn btn-outline-primary ">Logout</button></form>
+                }
+            </div> 
+        </div>
+    </nav>
+</header>
+
+<div class="container">
+    
+    <h2>Video selection</h2>
+        
+
+    <form id="form" asp-controller="User" asp-action="Index">
+        <fieldset class="form-group row mt-3">
+            <legend>Filter:</legend>
+
+            <div class="col-4">
+                <label for="filterName">Name part:</label>
+                <input name="filterName" id="filterName" class="form-control" type="text" value="@_filter.FilterName">
+            </div>
+            <div class="col-auto">
+                <br />
+                <input id="btnSubmit" name="btnSubmit" class="btn btn-outline-secondary" type="submit" value="Submit">
+            </div>
+        <div class="row">
+            <label>Page:</label>
+            <br />
+            <div class="btn-toolbar">
+                <div class="btn-group mt-3">
+                    @for (var i = 1; i <= _filter!.TotalPages; i++)
+                    {
+                        var currClass = _filter.Page == i ? "btn-primary" : "btn-outline-primary";
+                        <a asp-action="Index"
+                            data-page="@i"
+                            class="pager-btn btn @currClass">@i</a>
+                    }
+                </div>
+            </div>
+
+        </div>
+        </fieldset>
+    </form>
+    <br />
+
+    <div class="row p-4 justify-content-around" id="video-table-body">
+        <partial name="_PublicVideoTableBodyPartial" />
+    </div>
+        
+
+</div>
+
+@section Scripts {
+    <script>
+        $(".pager-btn").click(function (event) {
+            console.log("Pager button clicked");
+            event.preventDefault();
+
+            var page = $(this).data("page");
+
+            var ajaxData = {
+                page: page
+            };
+
+            $.ajax({
+                type: "GET",
+                url: "/User/VideoTableBodyPartial",
+                data: ajaxData,
+                success: function (data) {
+                    $("#video-table-body").html(data);
+
+                    $(".pager-btn").removeClass("btn-primary");
+                    $(".pager-btn").addClass("btn-outline-primary");
+
+                    $(".pager-btn[data-page=" + page + "]").removeClass("btn-outline-primary");
+                    $(".pager-btn[data-page=" + page + "]").addClass("btn-primary");
+                },
+                error: function (data) {
+                    console.error("Ajax GET error", data);
+                }
+            });
+        });
+    </script>
+}
+

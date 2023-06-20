@@ -1,0 +1,93 @@
+﻿@using DwaProject.WEB.Viewmodels;
+@model DwaProject.WEB.Viewmodels.VMUser
+
+@{
+    ViewData["Title"] = "UserProfile";
+    List<VMCountry> _countries = ViewData["Countries"] as List<VMCountry>;
+}
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-area="" asp-controller="User" asp-action="Index">Mewvies</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link" asp-area="" asp-controller="User" asp-action="Index">Videos</a>
+                </div>
+            </div>
+            <div class="navbar-nav justify-content-center mx-auto order-0">
+                <a class="nav-link">@Model.Username</a>
+            </div>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" asp-area="" asp-controller="User" asp-action="UserProfile">Profile</a>
+                @if (Model.Username != null)
+                {
+                    <form asp-controller="User" asp-action="Logout"><button type="submit" class="btn btn-outline-primary ">Logout</button></form>
+                }
+            </div>
+        </div>
+    </nav>
+</header>
+
+
+
+<div class="container">
+    <h1>Profile</h1>
+
+    <div>
+        <h4>@Model.Username</h4>
+        <hr />
+        <dl class="row">
+            
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.FirstName)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.FirstName)
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.LastName)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.LastName)
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.Email)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.Email)
+            </dd>
+            
+            <dt class = "col-sm-2">
+                Country of residence
+            </dt>
+            <dd class = "col-sm-10">
+                @if(_countries != null)
+                {
+                    <text>@_countries.FirstOrDefault(country => country.Id == Model.CountryOfResidenceId)!.Name</text>
+                }
+                
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Phone)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Phone)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.CreatedAt)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.CreatedAt)
+            </dd>
+        </dl>
+    </div>
+    <div>
+        @Html.ActionLink("Change password", "ChangePassword", new { id = Model.Id }, new { @class="btn btn-primary"})
+        <br /><br />
+        <a asp-action="Index" class="btn btn-info">Back to video selection</a>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+﻿@using DwaProject.WEB.Viewmodels;
+@using System.Security.Claims;
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor httpContextAccessor
+@{
+    string username = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+}
+@model List<VMVideo>
+@{
+
+    VMFilter _filter = ViewData["Filter"] as VMFilter;
+    List<VMImage> _images = ViewData["Images"] as List<VMImage>;
+    int videoID = 0;
+}
+
+@foreach (var video in Model)
+{
+    var image = _images!.First(i => i.Id == video.ImageId);
+    <button class="col-7" style="background-color:lavenderblush; padding:2px; margin:6px; border:solid" onclick="window.location.href = 'https://localhost:7291/User/Details/@video.Id'">
+
+        <div asp-action="Details" style="text-align:center">
+            <img src="data:image/png;base64,@image.Content">
+        </div>
+        <div asp-action="Details">
+            <h3 class="card-title">@video.Name</h3>
+            <p class="card-text">@video.Description</p>
+        </div>
+    </button>
+}

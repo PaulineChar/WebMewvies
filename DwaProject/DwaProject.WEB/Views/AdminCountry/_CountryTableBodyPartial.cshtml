@@ -1,0 +1,15 @@
+﻿@using DwaProject.WEB.Viewmodels;
+@model IEnumerable<DwaProject.WEB.Viewmodels.VMCountry>
+
+@foreach (var item in Model)
+{
+    <tr>
+        <td>
+            @Html.HiddenFor(modelItem => item.Id)
+            @Html.DisplayFor(modelItem => item.Code)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+    </tr>
+}

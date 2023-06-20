@@ -1,0 +1,115 @@
+﻿@using DwaProject.BL.BLModels;
+@using DwaProject.WEB.Viewmodels;
+@model DwaProject.WEB.Viewmodels.VMVideo
+
+@{
+    ViewData["Title"] = "Create";
+    List<BLGenre> _genres = ViewData["Genres"] as List<BLGenre>;
+    List<VMImage> _images = ViewData["Images"] as List<VMImage>;
+    List<BLTag> _tags = ViewData["Tags"] as List<BLTag>;
+    string content = "";
+}
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-area="" asp-controller="User" asp-action="Login">Mewvies</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link" asp-area="" asp-controller="AdminVideo" asp-action="Index">Videos</a>
+                    <a class="nav-link" asp-area="" asp-controller="AdminCountry" asp-action="Index">Countries</a>
+                    <a class="nav-link" asp-area="" asp-controller="AdminTag" asp-action="Index">Tags</a>
+                    <a class="nav-link" asp-area="" asp-controller="AdminGenre" asp-action="Index">Genres</a>
+                    <a class="nav-link" asp-area="" asp-controller="AdminUser" asp-action="Index">Users</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<div class="container">
+    <h1>Create</h1>
+
+    <h4>Video</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Create" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label"></label>
+                    <input asp-for="Description" class="form-control" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="GenreId" class="control-label">Genre</label>
+                    <select asp-for="GenreId" class="form-control">
+                        @foreach(var genre in _genres)
+                        {
+                            <option value="@genre.Id">@genre.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="GenreId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="TotalSeconds" class="control-label"></label>
+                    <input asp-for="TotalSeconds" class="form-control" min="1" default="120"/>
+                    <span asp-validation-for="TotalSeconds" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="StreamingUrl" class="control-label"></label>
+                    <input asp-for="StreamingUrl" class="form-control" />
+                    <span asp-validation-for="StreamingUrl" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ImageContent" class="control-label"></label>
+                    <select id="imageSelect" asp-for="ImageContent" class="form-control" onchange="document.getElementById('imagePreview').src= 'data:image/png;base64,' + document.getElementById('imageSelect').value">
+                        @foreach(var image in _images)
+                        {
+                            <option value="@image.Content">
+                                @image.Id
+                            </option>
+                        }
+                    </select>
+                    <span asp-validation-for="ImageContent" class="text-danger"></span>
+                    <br />
+                    <img id="imagePreview" src="data:image/png;base64,@_images[0].Content" />
+                </div>
+                <div>
+                    <label for="testFile">Or upload an image</label>
+                    <input name="ImageFile" id="ImageFile" class="form-control" type="file" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label asp-for="Tags" class="control-label"></label>
+                    <select asp-for="Tags" class="form-control" multiple="multiple">
+                        @foreach(var tag in _tags)
+                        {
+                            <option value="@tag.Name">@tag.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="Tags" class="text-danger"></span>
+                </div>
+                <br />
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+    <br />
+    <div>
+        <a asp-action="Index" class="btn btn-info">Back to List</a>
+    </div>
+
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
